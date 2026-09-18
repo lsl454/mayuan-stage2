@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>马原刷题包</title>
+<style>
+:root{
+  --paper:#EDEFEA; --card:#F8F9F6; --ink:#1E2321; --ink2:#5C6360; --ink3:#8A908B;
+  --rule:#D5D8D0; --zhu:#B03A2E; --zhu-bg:#F6E9E6; --dian:#31586B; --dian-bg:#E4ECF0;
+  --teng:#B5892C; --teng-bg:#F5EEDC;
+  --serif:"Noto Serif CJK SC","Source Han Serif SC","Songti SC",serif;
+  --sans:system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:16.5px;line-height:1.78;-webkit-text-size-adjust:100%}
+body{padding:0 0 104px;overflow-x:hidden}
+p{margin:0 0 .85em}
+b,strong{font-weight:600}
+
+.bar{position:sticky;top:0;z-index:20;background:var(--paper);
+  border-bottom:1px solid var(--rule);padding:12px 20px 10px}
+.bar-row{display:flex;align-items:baseline;gap:10px}
+.bar .step{font-family:var(--serif);font-size:13px;color:var(--ink3);flex:0 0 auto}
+.bar .name{font-family:var(--serif);font-size:17px;font-weight:600;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.track{height:2px;background:var(--rule);margin-top:9px;border-radius:2px;overflow:hidden}
+.track i{display:block;height:100%;background:var(--zhu);transition:width .35s ease}
+
+.wrap{padding:22px 20px 0;max-width:640px;margin:0 auto}
+.cover{padding:34px 20px 4px;max-width:640px;margin:0 auto}
+.cover h1{font-family:var(--serif);font-size:31px;line-height:1.32;margin:0 0 4px;font-weight:600}
+.cover .code{font-family:var(--serif);font-size:13.5px;color:var(--ink3);margin:0 0 20px}
+.cover .lede{font-size:15.5px;color:var(--ink2);margin:0 0 6px}
+
+.stats{display:flex;gap:0;margin:24px 0 4px;border-top:1px solid var(--rule);
+  border-bottom:1px solid var(--rule)}
+.stats div{flex:1;padding:13px 4px 12px;text-align:center}
+.stats div+div{border-left:1px solid var(--rule)}
+.stats .n{font-family:var(--serif);font-size:24px;font-weight:600;line-height:1.15}
+.stats .l{font-size:12.5px;color:var(--ink3)}
+
+.toc{list-style:none;margin:16px 0 0;padding:0}
+.toc li{border-top:1px solid var(--rule)}
+.toc li:last-child{border-bottom:1px solid var(--rule)}
+.toc a{display:flex;align-items:flex-start;gap:13px;padding:14px 2px;
+  text-decoration:none;color:inherit}
+.toc .sp{flex:0 0 4px;align-self:stretch;border-radius:3px;margin:2px 0}
+.toc .body{flex:1;min-width:0}
+.toc .t{font-family:var(--serif);font-size:17px;font-weight:600;line-height:1.5}
+.toc .d{font-size:13px;color:var(--ink3);margin-top:1px}
+.toc .mark{flex:0 0 auto;padding-top:4px;font-size:13.5px;color:var(--ink3);
+  font-family:var(--serif);white-space:nowrap}
+.toc .mark.ok{color:var(--zhu)}
+
+.sheet{border-left:2px solid var(--zhu-bg);padding-left:16px;margin-left:2px}
+h2.sec{font-family:var(--serif);font-size:22px;line-height:1.42;margin:0 0 2px;font-weight:600}
+.tag{display:inline-block;font-size:12px;padding:2px 9px;border-radius:2px;
+  font-family:var(--serif);letter-spacing:.05em;margin-bottom:12px}
+.tag.zhe{background:var(--dian-bg);color:var(--dian)}
+.tag.jing{background:var(--teng-bg);color:var(--teng)}
+.tag.ke{background:var(--zhu-bg);color:var(--zhu)}
+h3{font-family:var(--serif);font-size:17px;font-weight:600;margin:26px 0 8px;
+  padding-bottom:5px;border-bottom:1px solid var(--rule)}
+.lead{font-size:16.5px;color:var(--ink2);margin:0 0 4px}
+.dim{color:var(--ink3);font-size:14px}
+.u{border-bottom:2px solid var(--zhu);padding-bottom:1px}
+
+.box{background:var(--card);border:1px solid var(--rule);border-radius:3px;
+  padding:14px 16px;margin:14px 0}
+.box.warn{background:var(--zhu-bg);border-color:#E9CFC9}
+.box .bt{font-family:var(--serif);font-size:15px;font-weight:600;margin-bottom:7px;color:var(--zhu)}
+.box.plain .bt{color:var(--dian)}
+.box p:last-child{margin-bottom:0}
+.tip{margin:14px 0;padding-left:15px;border-left:3px solid var(--dian-bg)}
+.tip .tt{font-family:var(--serif);font-size:16px;font-weight:600;margin-bottom:5px}
+.tip .tb{font-size:15.5px;color:var(--ink2)}
+.tip .tb b{color:var(--ink)}
+
+.qhead{font-family:var(--serif);font-size:13px;color:var(--ink3);margin-bottom:10px}
+.qstem{font-family:var(--serif);font-size:18.5px;line-height:1.66;font-weight:600;margin:0 0 18px}
+.choices{list-style:none;margin:0;padding:0}
+.choices li{border:1px solid var(--rule);background:var(--card);border-radius:3px;
+  padding:12px 14px;margin-bottom:10px;display:flex;gap:11px;align-items:flex-start;
+  cursor:pointer;font-size:16px}
+.choices li .L{font-family:var(--serif);font-weight:600;color:var(--ink3);flex:0 0 16px}
+.choices li.right{border-color:var(--zhu);background:var(--zhu-bg)}
+.choices li.right .L{color:var(--zhu)}
+.choices li.wrong{border-color:var(--ink3);background:#E9E9E6;opacity:.85}
+.choices li.lock{cursor:default}
+.verdict{margin-top:16px;padding:14px 16px;border-radius:3px;border:1px solid var(--rule);
+  background:var(--card)}
+.verdict .v{font-family:var(--serif);font-weight:600;margin-bottom:5px}
+.verdict .v.ok{color:var(--zhu)}
+.verdict .v.no{color:var(--dian)}
+.verdict .src{font-size:13px;color:var(--ink3);margin-top:6px}
+
+.score{font-family:var(--serif);font-size:56px;font-weight:600;line-height:1;margin:8px 0 2px}
+.score small{font-size:18px;color:var(--ink3);font-weight:400}
+.wq{border-top:1px solid var(--rule);padding:13px 0}
+.wq:last-of-type{border-bottom:1px solid var(--rule)}
+.wq .wqq{font-family:var(--serif);font-size:15.5px;font-weight:600;line-height:1.6}
+.wq .wqa{font-size:14.5px;color:var(--zhu);margin-top:4px}
+.wq .wqw{font-size:14px;color:var(--ink2);margin-top:3px}
+
+.foot{position:fixed;left:0;right:0;bottom:0;z-index:30;
+  background:linear-gradient(to top,var(--paper) 62%,rgba(237,239,234,0));
+  padding:18px 20px calc(18px + env(safe-area-inset-bottom));
+  display:flex;gap:10px;max-width:640px;margin:0 auto}
+.btn{flex:1;display:block;text-align:center;text-decoration:none;font-family:var(--serif);
+  font-size:16px;font-weight:600;padding:13px 12px;border-radius:3px;
+  border:1px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--rule);flex:0 0 92px}
+.btn:active{opacity:.72}
+.tail{font-size:13px;color:var(--ink3);text-align:center;padding:30px 20px 10px;line-height:1.7}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="foot" class="foot"></div>
+<script>
+
+var DAYS = [{"id":"d1","name":"第一天","topic":"绪论与唯物论","sub":"马克思主义从哪来，世界的本原是什么","cls":"zhe","tips":[{"t":"限定词就是答案开关","b":"马原选择题最爱在题干里埋限定词：<b>直接</b>、<b>唯一</b>、<b>根本</b>、<b>集中表现</b>、<b>基本</b>。四个选项往往都对，只有一个对得上那个限定词。<br><br>做题第一动作：先把限定词圈出来，再看选项。"},{"t":"缩小范围型干扰项","b":"问「世界观是什么」，选项给你「对自然界的看法」「对人类社会的看法」——这些都是把范围缩小了。<br><br>凡是题干说「整个」「一切」，而选项只说其中一部分的，一律排除。"},{"t":"来源和前提是两回事","b":"直接理论来源 ＝ 德国古典哲学、英国古典政治经济学、英法空想社会主义。<br>自然科学前提 ＝ 细胞学说、能量守恒与转化、进化论。<br><br>一个是哲学，一个是科学，考试常互换着问。"}],"qs":[{"q":"马克思主义哲学的直接理论来源是","o":["古希腊罗马哲学","德国古典哲学","近代英国哲学","近代法国哲学"],"a":1,"w":"三大直接来源：德国古典哲学、英国古典政治经济学、英法空想社会主义。问哲学来源就选德国古典哲学。","s":"2022年4月·第1题"},{"q":"细胞学说、能量守恒与转化、进化论三大发现，为马克思主义的产生提供了","o":["直接来源","阶级利益","自然科学基础","主观条件"],"a":2,"w":"自然科学三大发现是「自然科学前提」，不是「直接理论来源」。来源是哲学，前提是科学，别混。","s":"2023年4月·第1题"},{"q":"马克思主义产生于19世纪","o":["40年代","50年代","60年代","70年代"],"a":0,"w":"19世纪40年代。记住锚点：1848年《共产党宣言》发表，所以只能是40年代。","s":"2021年10月·第1题"},{"q":"下列各项集中表现马克思主义革命性的是","o":["科学的理论内涵","完备的理论体系","严密的逻辑结构","彻底的批判精神"],"a":3,"w":"革命性＝彻底的批判精神 + 鲜明的政治立场。科学性才讲理论体系、逻辑结构。","s":"2021年10月·第2题"},{"q":"马克思主义的革命性集中表现为它具有彻底的批判精神，还表现为它具有","o":["完整的理论体系","严密的逻辑结构","鲜明的政治立场","崇高的社会理想"],"a":2,"w":"上一题的另一个问法：题干已经给了「批判精神」，要补的就是「鲜明的政治立场」。","s":"2023年10月·第2题"},{"q":"学习马克思主义的根本方法是","o":["理论联系实际","更新思想观念","熟读经典著作","了解党的文献"],"a":0,"w":"「根本方法」四个字只对应理论联系实际，这是固定搭配，简答题也考。","s":"2022年4月·第2题"},{"q":"世界观是人们","o":["对自然界的根本看法和根本观点","对人类社会的根本看法和根本观点","对精神世界的根本看法和根本观点","对整个世界的根本看法和观点"],"a":3,"w":"世界观管的是「整个世界」。A、B、C 都把范围缩小了——这就是典型的缩小范围型干扰项。","s":"2023年4月·第3题"},{"q":"唯物主义和唯心主义是两种根本对立的哲学派别，其形成的原因在于","o":["二者对客观实在性的认识不同","二者对主观能动性的认识不同","二者对物质和意识谁为本源问题的回答不同","二者对思维和存在有否同一性问题的回答不同"],"a":2,"w":"分唯物唯心，看本原问题；分可知论不可知论，看同一性问题。D 是另一道题的答案。","s":"2025年10月·第3题"},{"q":"客观实在性作为物质的唯一特性，体现的是","o":["某种自然存在的个别特性","自然存在和社会存在的不同特性","几种自然存在的共同特性","自然存在和社会存在的共同特性"],"a":3,"w":"「唯一特性」意味着它必须涵盖一切存在——自然的和社会的都算，所以是二者的共同特性。","s":"2025年10月·第4题"},{"q":"马克思指出：“观念的东西不外是移入人脑并在人的头脑中改造过的物质的东西而已。”这就是说","o":["意识是人脑的分泌物","意识是客观世界的主观映象","意识是人脑的附属物","意识是客观世界的虚幻影像"],"a":1,"w":"标准表述就是「客观世界的主观映象」。A 是庸俗唯物主义，D 是唯心主义，都是错的。","s":"2025年10月·第5题"},{"q":"把意识说成是人脑的分泌物，这是一种","o":["庸俗唯物主义的观点","朴素唯物主义的观点","形而上学唯物主义的观点","辩证唯物主义的观点"],"a":0,"w":"「分泌物」把意识当成了物质本身，这是庸俗唯物主义的标志性说法，见到就选它。","s":"2020年10月·第6题"},{"q":"时间的一维性指的是时间的","o":["绝对性","无限性","持续性","不可逆性"],"a":3,"w":"一维＝只有一个方向＝一去不返＝不可逆性。C「持续性」是时间的另一个含义，不是「一维性」。","s":"2023年10月·第4题"}]},{"id":"d2","name":"第二天","topic":"辩证法与哲学派别","sub":"世界怎么变，各派怎么站队","cls":"zhe","tips":[{"t":"先分清问的是哪一层","b":"辩证法有三个说法层层套着，真题就在它们之间换词：<br><br>总观点、总特征 → <b>联系和发展</b><br>实质、核心 → <b>对立统一规律</b><br>三大规律 → 对立统一、质量互变、否定之否定<br><br>看到题干出现「总」就选联系和发展，出现「核心」「实质」就选对立统一。"},{"t":"三条规律的固定口诀","b":"对立统一 → 动力和源泉<br>质量互变 → 状态和形式<br>否定之否定 → 趋势和道路<br><br>这三行几乎每隔一两年考一次，背下来就是白送两分。"},{"t":"五对范畴各管一件事","b":"本质和现象 → 管深浅（根本性质 vs 表面特征）<br>原因和结果 → 管前后相继<br>现实和可能 → 管现在与将来<br>内容和形式 → 管构成与表现方式<br>必然和偶然 → 管确定性<br><br>题干说「将来」就选现实和可能，说「表面」就选本质和现象。"}],"qs":[{"q":"联系的观点和发展的观点是","o":["马克思主义的理论品质","唯物辩证法的总观点和总特征","马克思主义的活的灵魂","唯物辩证法的实质和核心"],"a":1,"w":"总观点、总特征＝联系和发展；实质、核心＝对立统一规律。D 就是等你换错的那个坑。","s":"2023年10月·第5题"},{"q":"唯物辩证法是关于自然、社会和思维联系与发展一般规律的科学。其中，否定之否定规律揭示的是事物发展的","o":["前提和条件","状态和形式","动力和源泉","趋势和道路"],"a":3,"w":"三条口诀：对立统一＝动力和源泉，质量互变＝状态和形式，否定之否定＝趋势和道路。","s":"2022年4月·第5题"},{"q":"“矛盾无处不在，矛盾无时不有。”这句话说的是","o":["矛盾具有特殊性","矛盾具有普遍性","矛盾具有同一性","矛盾具有斗争性"],"a":1,"w":"「无处不在、无时不有」＝到处都有＝普遍性。特殊性讲的是各有各的不同。","s":"2023年4月·第5题"},{"q":"分析矛盾的特殊性就是","o":["坚持“两点论”","坚持理论联系实际","坚持“重点论”","坚持具体问题具体分析"],"a":3,"w":"特殊性对应的方法论固定是「具体问题具体分析」，这是马克思主义活的灵魂。","s":"2021年4月·第5题"},{"q":"在唯物辩证法体系中，反映事物的过去、现在和将来关系的一对范畴是","o":["内容和形式","本质和现象","原因和结果","现实和可能"],"a":3,"w":"五对范畴各管一件事：现实和可能管时间上的「现在与将来」，原因和结果管「前后相继」。看到「将来」就选现实和可能。","s":"2025年10月·第6题"},{"q":"下列唯物辩证法范畴中反映事物根本性质和表面特征关系的是","o":["内容和形式","必然和偶然","本质和现象","可能性与现实性"],"a":2,"w":"「根本性质」对本质，「表面特征」对现象。内容和形式讲的是构成与表现方式，不是深浅。","s":"2021年10月·第4题"},{"q":"假象同真象一样，也是客观存在的。这是一种","o":["唯物辩证法的观点","形而上学的观点","折衷主义的观点","诡辩论的观点"],"a":0,"w":"假象也是本质的一种表现，是客观的，不是人主观造出来的——这正是唯物辩证法的立场。","s":"2021年4月·第6题"},{"q":"在世界如何存在的问题上，两种根本对立的观点是","o":["唯物与唯心","辩证法和形而上学","一元和二元","可知与不可知"],"a":1,"w":"「世界是什么」分唯物唯心；「世界怎么存在」分辩证法和形而上学。抓住题干问的是「如何存在」。","s":"2021年10月·第3题"},{"q":"把世界的本质或本原归结为某一种或某几种具体的物质形态，这种观点属于","o":["古代朴素唯物主义","庸俗唯物主义","形而上学唯物主义","辩证唯物主义"],"a":0,"w":"水、火、气这类「具体物质形态」是古代朴素唯物主义的标志。形而上学唯物主义归结为原子。","s":"2023年4月·第4题"},{"q":"承认世界具有统一性的哲学就是","o":["唯物论","辩证法","一元论","可知论"],"a":2,"w":"一元论＝承认世界有统一的本原。至于本原是物质还是精神，那是唯物唯心的分歧，是下一层。","s":"2021年4月·第3题"},{"q":"在一元论上，唯物主义与唯心主义的共同点是承认世界的","o":["同一性","可知性","统一性","物质性"],"a":2,"w":"唯心主义一元论也承认世界有统一本原，只是认为那个本原是精神。共同点是「统一性」，不是「物质性」。","s":"2023年4月·第2题"},{"q":"与自然规律相比，社会规律","o":["不具有客观性","是通过各种盲目力量实现的","不具有普遍性","是通过人的自觉活动实现的"],"a":3,"w":"社会规律照样客观、普遍，唯一的不同是它必须通过人的自觉活动才实现。凡是说社会规律「不客观」的都是错的。","s":"2020年10月·第5题"}]},{"id":"d3","name":"第三天","topic":"认识论与真理","sub":"怎么从「看到」变成「懂了」","cls":"zhe","tips":[{"t":"认识论四象限，一张表通杀","b":"关于「认识是什么」，四种立场各有一句标志性说法：<br><br>认识是从天上掉下来的 → 客观唯心主义<br>认识是对客体的<b>直观</b>反映 → 旧（机械）唯物主义<br>认识是人脑主观自生的 → 主观唯心主义<br>认识是对客体的<b>能动</b>反映 → 辩证唯物主义<br><br>「能动」两个字就是正确答案的标记。"},{"t":"六个词，两组，别串","b":"感性认识三形式：感觉 → 知觉 → 表象<br>理性认识三形式：概念 → 判断 → 推理<br><br>分不清时用这个笨办法：感性那三个带感官味道，理性那三个是脑子里想出来的。"},{"t":"两个「主义」是反过来的","b":"片面夸大<b>感性</b>认识 → 经验主义<br>片面夸大<b>理性</b>认识 → 教条主义<br><br>另外记住：实践是检验真理的唯一标准，原因是它有<b>直接现实性</b>。"}],"qs":[{"q":"唯物主义一元论与唯心主义一元论的区别在于是否承认","o":["世界万物的本原只有一个","世界万物的本原是物质","检验真理的标准只有一个","检验真理的标准是实践"],"a":1,"w":"两者都承认本原只有一个（都是一元论），区别在于那个本原是不是物质。A 是它们的共同点，不是区别。","s":"2023年10月·第3题"},{"q":"“认识的本质是主体在实践基础上对客体的能动反映”，这是一种","o":["主观唯心主义认识论观点","客观唯心主义认识论观点","辩证唯物主义认识论观点","旧唯物主义认识论观点"],"a":2,"w":"两个关键词：实践基础 + 能动反映。旧唯物主义只承认反映不承认能动，也不讲实践。","s":"2025年10月·第7题"},{"q":"认识是主体对客体的能动反映，这是一种","o":["机械唯物主义认识论观点","辩证唯物主义认识论观点","主观唯心主义认识论观点","客观唯心主义认识论观点"],"a":1,"w":"只要出现「能动反映」四个字，答案就是辩证唯物主义。机械（旧）唯物主义对应的是「直观反映」。","s":"2023年4月·第7题"},{"q":"下列各项属于辩证唯物主义观点的是","o":["认识是从天上掉下来的","认识是主体对客体的直观反映","认识是人脑主观自生的","认识是主体对客体的能动反映"],"a":3,"w":"四个选项刚好是四种立场：A 客观唯心，B 旧唯物，C 主观唯心，D 辩证唯物。记住这张四象限表，这类题全送分。","s":"2023年10月·第7题"},{"q":"感性认识与理性认识的区别在于","o":["前者是主观的，后者是客观的","前者源于实践，后者源于内省","前者是抽象的思维，后者是生动的直观","前者反映事物现象，后者揭示事物本质"],"a":3,"w":"感性看表面现象，理性抓内在本质。C 把两者说反了，是常见倒置型干扰项。","s":"2023年4月·第8题"},{"q":"理性认识的三种形式是","o":["感觉、概念、判断","概念、判断、推理","感觉、知觉、表象","感觉、知觉、推理"],"a":1,"w":"感性三形式：感觉→知觉→表象；理性三形式：概念→判断→推理。六个词分两组，顺序也要对。","s":"2022年4月·第8题"},{"q":"轻视理性认识而片面夸大感性认识的作用，会导致实践中的","o":["实用主义","怀疑主义","教条主义","经验主义"],"a":3,"w":"夸大感性＝经验主义，夸大理性＝教条主义。一句话记：只信经验的是经验主义。","s":"2025年10月·第8题"},{"q":"哲学史上的唯理论和经验论的错误在于","o":["割裂了感性认识和理性认识的联系","颠倒了直接经验和间接经验的关系","混淆了正确认识和错误认识的区别","模糊了绝对真理和相对真理的界限"],"a":0,"w":"唯理论只要理性，经验论只要感性，共同毛病是把两者割裂开。","s":"2023年10月·第8题"},{"q":"实践是检验真理的唯一标准，这是因为","o":["实践是人类生存和发展的基础","实践是人类社会生活的本质","实践是真理和价值统一的基础","实践具有直接现实性的品质"],"a":3,"w":"问「为什么能当标准」，答案只能是「直接现实性」——它能把想法变成看得见的结果。其余三项本身没错，但答非所问。","s":"2025年10月·第9题"},{"q":"在真理的检验标准问题上，下列各项中说法正确的是","o":["多数人认可的就是真理","个人觉得有用的就是真理","少数人坚持的就是真理","在实践中证实的才是真理"],"a":3,"w":"凡是把标准放在「人怎么想」上的选项都错。标准只有一个：实践。","s":"2018年10月·第9题"},{"q":"在检验认识真理性的问题上，下列各项正确说明实践标准与逻辑证明关系的是","o":["实践标准具有绝对性，无需逻辑证明补充","实践标准具有相对性，必须逻辑证明补充","被逻辑证明了的认识，最终还要用实践来检验","逻辑证明可以取代实践成为检验真理的标准"],"a":2,"w":"逻辑证明是辅助，不能取代实践；实践才有最后的权威。A 太绝对，D 直接错。","s":"2023年4月·第9题"},{"q":"被称为马克思主义哲学的精髓、党的思想路线的核心的是","o":["一切从实际出发","理论联系实际","解放思想","实事求是"],"a":3,"w":"「精髓」「核心」这两个词只对应实事求是。思想路线一共四句，核心那句就是它。","s":"2023年10月·第9题"}]},{"id":"d4","name":"第四天","topic":"唯物史观","sub":"社会到底靠什么推动","cls":"zhe","tips":[{"t":"「决定」和「影响」是两个档位","b":"地理环境、人口因素 → 只能<b>影响、制约</b>社会发展<br>物质生产方式 → 才是<b>决定</b>作用<br><br>凡是让地理环境或人口「决定社会性质」「决定形态更替」的选项，一律排除，不用犹豫。"},{"t":"两对关系别串门","b":"生产力 — 生产关系：人和自然打交道的能力，配什么样的分工分配<br>经济基础 — 上层建筑：经济制度，配什么样的政治法律和思想<br><br><b>社会形态 ＝ 经济基础 + 上层建筑</b>。问「社会形态是什么的统一」时，「生产力与生产关系」就是那个陷阱。"},{"t":"看清有没有「社会」两个字","b":"思维和存在的关系 → 划分唯物主义和唯心主义<br><b>社会</b>存在和<b>社会</b>意识的关系 → 划分唯物史观和唯心史观<br><br>两句话长得几乎一样，差的就是「社会」二字。"}],"qs":[{"q":"社会历史观的基本问题是","o":["社会存在和社会意识的关系问题","物质文明和精神文明协调发展的问题","社会革命和社会改革的关系问题","群众、阶级、政党、领袖的关系问题"],"a":0,"w":"哲学基本问题是思维和存在的关系，搬到社会上就是社会存在和社会意识的关系。这是唯物史观的入口。","s":"2025年10月·第11题"},{"q":"对社会存在和社会意识关系问题的不同回答是","o":["划分唯物主义和唯心主义的标准","划分可知论和不可知论的标准","划分唯物史观和唯心史观的标准","划分辩证法和形而上学的标准"],"a":2,"w":"注意题干说的是「社会」存在和「社会」意识，所以划分的是史观，不是一般的唯物唯心。A 就是没看清「社会」两个字的人会选的。","s":"2022年4月·第10题"},{"q":"社会存在即社会物质生活条件，是社会生活的物质方面。下列选项中不属于社会存在的是","o":["自然地理环境","政治法律思想","物质生产方式","人口因素"],"a":1,"w":"社会存在三样：地理环境、人口因素、物质生产方式。政治法律思想是社会意识，属于上层建筑。","s":"2025年10月·第12题"},{"q":"地理环境在社会发展中的作用表现为","o":["它决定社会制度的性质","它影响和制约社会的发展","它决定社会形态的更替","它决定社会生产力的水平"],"a":1,"w":"地理环境和人口因素都只能「影响制约」，不能「决定」。凡是让它们「决定」什么的选项一律排除。","s":"2023年4月·第10题"},{"q":"人口因素在社会发展中的作用表现为","o":["影响社会阶层的划分","影响社会发展的速度","决定社会制度的性质","决定社会形态的更替"],"a":1,"w":"同一条规则：人口只能影响快慢，不能决定性质。真正起决定作用的是物质生产方式。","s":"2023年10月·第10题"},{"q":"在现代生产力系统中，劳动者、劳动资料和劳动对象属于","o":["准备性因素","运筹性因素","实体性因素","渗透性因素"],"a":2,"w":"看得见摸得着的三样是实体性因素；科学技术是渗透性因素，教育是准备性因素，管理是运筹性因素。","s":"2023年10月·第11题"},{"q":"衡量生产力水平的客观尺度是","o":["生产工具的状况","劳动对象的广度","劳动产品的数量","劳动产品的质量"],"a":0,"w":"生产工具是尺度，劳动者是最活跃的因素。这两个「最」经常一起考，别对调。","s":"2022年4月·第11题"},{"q":"下列各项正确说明经济基础与上层建筑关系的是","o":["经济基础的性质决定上层建筑的性质","上层建筑的性质决定经济基础的性质","上层建筑的变化决定经济基础的变化","上层建筑各个部分都随经济基础的变化而同步变化"],"a":0,"w":"经济基础决定上层建筑，上层建筑只能反作用。D 错在「同步」——上层建筑有相对独立性，会滞后。","s":"2025年10月·第13题"},{"q":"在经济基础和上层建筑这对矛盾当中","o":["经济基础是矛盾的主要方面","经济基础应上层建筑的需要产生","上层建筑是矛盾的主要方面","上层建筑是经济基础的物质根源"],"a":0,"w":"谁起决定作用谁就是矛盾的主要方面。这里是经济基础。","s":"2023年4月·第11题"},{"q":"社会形态是","o":["自然界与人类社会的统一","地理环境与人口因素的统一","生产力与生产关系的统一","经济基础与上层建筑的统一"],"a":3,"w":"社会形态＝经济基础＋上层建筑。C 说的是另一对关系，看着顺眼但不是答案。","s":"2023年10月·第12题"},{"q":"社会历史发展的动力是多方面的，其中作为基本动力的是","o":["社会基本矛盾","阶级斗争","科学技术革命","社会改革"],"a":0,"w":"B、C、D 都是动力，但只有社会基本矛盾是「基本」动力。题干里的限定词决定答案。","s":"2023年10月·第13题"},{"q":"人的本质在于","o":["人的道德素质","人的法治素养","人的自然属性","人的社会属性"],"a":3,"w":"人的本质是一切社会关系的总和，所以在于社会属性而非自然属性。","s":"2023年4月·第12题"}]},{"id":"d5","name":"第五天","topic":"商品与价值","sub":"整个政治经济学的地基","cls":"jing","tips":[{"t":"三组「二」，一张对应线","b":"商品<b>二因素</b>：使用价值 / 价值<br>劳动<b>二重性</b>：具体劳动 / 抽象劳动<br>基本<b>矛盾</b>：私人劳动 / 社会劳动<br><br>对应线：<br>具体劳动 → 使用价值 → 自然属性 → 人与自然<br>抽象劳动 → 价值 → 社会属性 → 人与人<br><br>答题前先看清题干问的是「二因素」「二重性」还是「基本矛盾」。"},{"t":"连动词都是固定的","b":"具体劳动<b>创造</b>使用价值<br>抽象劳动<b>形成</b>价值<br><br>教材原话就是这两个动词，选项里换了动词的多半是错的。"},{"t":"正反比只有一个方向","b":"价值量 与 社会必要劳动时间 → <b>成正比</b><br>价值量 与 劳动生产率 → <b>成反比</b><br><br>理解一遍就不用背：效率高了，做一件东西花的社会必要劳动时间就少，那件东西自然更不值钱。"}],"qs":[{"q":"商品经济产生和存在的决定性条件是","o":["商品生产","商品交换","社会分工","生产资料和劳动产品属于不同的所有者"],"a":3,"w":"两个条件：社会分工是一般条件，不同所有者是决定性条件。问「决定性」就选后者。","s":"2023年4月·第14题"},{"q":"商品经济得以产生的社会历史条件，除了生产资料和劳动产品属于不同所有者之外，还有一个，即","o":["存在自然分工","存在社会分工","存在部落内部分工","存在部落间分工"],"a":1,"w":"上一题的补位问法：另一个条件是社会分工。注意是「社会分工」，不是自然分工。","s":"2026年4月·第14题"},{"q":"商品二因素中反映人与自然之间的物质关系、属于商品自然属性的因素，是商品的","o":["使用价值","交换价值","价值","价格"],"a":0,"w":"使用价值＝自然属性＝人与自然；价值＝社会属性＝人与人。这条线是整块政经的基准线。","s":"2026年4月·第15题"},{"q":"以下关于商品使用价值的表述中不正确的是","o":["使用价值是价值的物质承担者","使用价值是商品的自然属性","同一物品只能有一种使用价值","没有使用价值的物品不可能有价值"],"a":2,"w":"本题问「不正确」，别看反。一块铁可以打刀也可以做锅，使用价值是多方面的，所以 C 错。","s":"2022年4月·第15题"},{"q":"在商品经济中，生产商品的劳动具有二重性，这里的劳动二重性是指","o":["具体劳动和抽象劳动","活劳动和物化劳动","体力劳动和脑力劳动","私人劳动和社会劳动"],"a":0,"w":"二重性＝具体劳动＋抽象劳动。D 是「基本矛盾」，被放进来当陪跑，这是最高频的一个坑。","s":"2023年10月·第14题"},{"q":"从商品二因素与劳动二重性的关系考察，商品经济中能够形成商品价值的劳动是","o":["具体劳动","体力劳动","抽象劳动","脑力劳动"],"a":2,"w":"具体劳动创造使用价值，抽象劳动形成价值。「创造」配使用价值，「形成」配价值，连动词都是固定的。","s":"2025年10月·第14题"},{"q":"决定商品价值量的是","o":["物化劳动时间","活劳动时间","个别劳动时间","社会必要劳动时间"],"a":3,"w":"永远是社会必要劳动时间。个别劳动时间只影响这一家企业赚多赚少，不决定价值量。","s":"2023年4月·第15题"},{"q":"单位商品的价值量与生产该商品的劳动生产率","o":["成正比","成反比","同比例变化","没有关系"],"a":1,"w":"效率越高，一件东西花的社会必要劳动时间越少，价值量越小——所以成反比。","s":"2021年4月·第14题"},{"q":"下列关于商品价值量决定关系的表述中，正确的是","o":["商品的价值量与社会必要劳动时间成正比，与劳动生产率成反比","商品的价值量与社会必要劳动时间成反比，与劳动生产率成正比","商品的价值量与社会必要劳动时间成正比，与劳动生产率也成正比","商品的价值量与社会必要劳动时间成反比，与劳动生产率也成反比"],"a":0,"w":"一正一反：跟时间成正比，跟生产率成反比。这两句要一起背，考试常合在一个选项里。","s":"2025年10月·第15题"},{"q":"简单商品经济的基本矛盾是指","o":["价值和使用价值的矛盾","价值和交换价值的矛盾","私人劳动和社会劳动的矛盾","具体劳动和抽象劳动的矛盾"],"a":2,"w":"基本矛盾只有一个答案：私人劳动和社会劳动。A、D 是另外两组「二」，专门用来干扰。","s":"2018年10月·第14题"},{"q":"以私有制为基础的商品经济的基本矛盾是","o":["具体劳动和抽象劳动的矛盾","私人劳动和社会劳动的矛盾","个别劳动和一般劳动的矛盾","生产劳动和非生产劳动的矛盾"],"a":1,"w":"「简单商品经济」和「以私有制为基础的商品经济」说的是同一件事，答案也一样。","s":"2026年4月·第16题"},{"q":"货币的五种职能中最基本的是","o":["世界货币和贮藏手段","贮藏手段和支付手段","价值尺度和流通手段","价值尺度和价格标准"],"a":2,"w":"五种职能里最基本的两个是价值尺度和流通手段，其余三个都是派生出来的。","s":"2020年10月·第14题"}]},{"id":"d6","name":"第六天","topic":"剩余价值与资本","sub":"资本家的钱究竟从哪来","cls":"jing","tips":[{"t":"两把尺子量同一笔资本","b":"按在<b>价值增殖</b>中的作用分 → 不变资本 / 可变资本<br>按<b>周转方式</b>分 → 固定资本 / 流动资本<br><br>同一台机器，既是不变资本又是固定资本。做题时先看题干用的是哪把尺子——出现「资本循环周转」就用第二把。"},{"t":"三种剩余价值的判别词","b":"延长工作日 → <b>绝对</b>剩余价值<br>全<b>社会</b>劳动生产率提高、必要劳动时间缩短 → <b>相对</b>剩余价值<br><b>个别</b>企业效率高于社会平均 → <b>超额</b>剩余价值<br><br>关键就看是「社会」还是「个别」。"},{"t":"分母决定它叫什么","b":"÷ 可变资本 → 剩余价值率，量的是<b>剥削程度</b><br>÷ 预付总资本 → 利润率，量的是<b>增殖程度</b><br><br>平均利润率 ＝ 全社会剩余价值总量 ÷ 全社会预付总资本。分母里出现「可变资本」的都不是它。"}],"qs":[{"q":"货币转化为资本的前提是","o":["资本完成原始积累","商品生产者出现两极分化","劳动力成为商品","劳动者有人身自由"],"a":2,"w":"整个剩余价值理论的入口。D 只是劳动力成为商品的条件之一，不是那个「前提」本身。","s":"2022年4月·第16题"},{"q":"资本主义社会中，劳动力成为商品要具备的基础条件，不包括","o":["劳动者在法律上是自由人","劳动者人身依附于资本家","劳动者没有生活资料来源","劳动者没有任何生产资料"],"a":1,"w":"问「不包括」。劳动力成为商品恰恰要求劳动者人身自由，人身依附是封建关系，正好相反。","s":"2025年10月·第16题"},{"q":"必要劳动时间不变，通过工作日的延长而生产的剩余价值是","o":["绝对剩余价值","相对剩余价值","超额剩余价值","平均剩余价值"],"a":0,"w":"判别关键词：延长工作日＝绝对；缩短必要劳动时间＝相对；个别企业效率高＝超额。","s":"2022年4月·第17题"},{"q":"相对剩余价值生产的条件是","o":["社会劳动生产率提高","个别企业劳动生产率提高","社会劳动生产率不变","部分生产部门的劳动生产率提高"],"a":0,"w":"相对剩余价值靠的是全社会效率提高；个别企业效率提高得到的是超额剩余价值。「社会」还是「个别」是分界线。","s":"2021年10月·第16题"},{"q":"个别企业由于劳动生产率更高，从而使商品个别价值低于社会价值所获得的剩余价值是","o":["绝对剩余价值","相对剩余价值","超额剩余价值","平均剩余价值"],"a":2,"w":"个别价值低于社会价值＝超额剩余价值。凡是题干出现「个别企业」「率先采用新技术」，答案都是它。","s":"2023年4月·第16题"},{"q":"剩余价值率反映的是","o":["不变资本的增殖程度","资本家对工人的剥削程度","固定资本的增殖程度","流动资本的增殖程度"],"a":1,"w":"剩余价值率＝剩余价值÷可变资本，衡量的是剥削程度；利润率才衡量增殖程度。","s":"2020年10月·第15题"},{"q":"从资本循环周转的角度考察，资本家用于购买机器设备的资本属于","o":["可变资本","不变资本","流动资本","固定资本"],"a":3,"w":"题干说「从资本循环周转的角度」，那就用固定/流动这套分法，答固定资本。如果问的是增殖作用，才答不变资本。同一台机器两个身份，看题干用哪把尺子。","s":"2023年10月·第16题"},{"q":"从资本循环角度看，资本家工厂中已经进入仓库的产成品，属于产业资本循环中的","o":["货币资本形态","生产资本形态","商品资本形态","固定资本形态"],"a":2,"w":"产业资本循环三形态：货币资本→生产资本→商品资本。做好待卖的东西就是商品资本。D 又是另一套分法的干扰项。","s":"2026年4月·第18题"},{"q":"生产资料和劳动力在构成上的比例是","o":["资本的技术构成","资本的价值构成","资本的有机构成","资本的数量构成"],"a":0,"w":"按实物量算的比例叫技术构成；按价值算的叫价值构成；由技术构成决定并反映其变化的价值构成才叫有机构成。","s":"2023年4月·第18题"},{"q":"以下不属于资本积累后果的是","o":["资本有机构成提高","工作日的延长","相对过剩人口的形成","贫富两极分化扩大"],"a":1,"w":"问「不属于」。延长工作日是生产绝对剩余价值的手段，不是资本积累带来的后果。","s":"2021年10月·第17题"},{"q":"平均利润率是","o":["社会的利润总量与社会预付可变资本的比率","社会的利润总量与社会预付不变资本的比率","社会的剩余价值总量与社会预付可变资本的比率","社会的剩余价值总量与社会预付总资本的比率"],"a":3,"w":"分子是全社会剩余价值总量，分母是全社会预付总资本。分母只要出现「可变资本」的，那是剩余价值率。","s":"2020年10月·第18题"},{"q":"资本主义再生产周期通常包括四个阶段，其中作为必经阶段和基本阶段的是","o":["危机阶段","萧条阶段","复苏阶段","高涨阶段"],"a":0,"w":"四阶段：危机→萧条→复苏→高涨。危机是周期的起点，也是必经和基本阶段。","s":"2025年10月·第17题"}]},{"id":"d7","name":"第七天","topic":"垄断与科学社会主义","sub":"资本主义的终局，和之后是什么","cls":"ke","tips":[{"t":"垄断组织按结合的松紧排","b":"卡特尔 → 只商定价格产量，最松最初级<br>辛迪加 → 统一采购销售，生产还各干各的<br>托拉斯 → 生产经营全过程合并成一家<br>康采恩 → 跨部门跨行业的庞大集团<br><br>问「最简单、最初级」就选卡特尔那一档。"},{"t":"金融寡头的两条线","b":"控制<b>经济</b> → 靠参与制（层层控股）<br>控制<b>国家机器</b> → 靠同政府的「个人联合」<br><br>这两个最容易对调，记住「人进政府」对应「个人联合」。"},{"t":"科社的「第一次」清单","b":"第一个纲领性文件 → 《共产党宣言》<br>夺取政权的第一次尝试 → 巴黎公社<br>第一个社会主义国家 → 苏维埃俄国<br>马克思两大发现 → 唯物史观 + 剩余价值学说<br>最高理想 → 实现共产主义<br>共产主义根本特征 → 人的自由而全面的发展<br><br>这一块几乎不设陷阱，看到就该拿分。"}],"qs":[{"q":"19世纪末20世纪初形成的垄断资本主义主要以私人垄断资本为基础。私人垄断资本主义形成的基础是","o":["生产集中和市场集中","生产集中和资本集中","资本集中和市场集中","技术集中和资本集中"],"a":1,"w":"固定搭配：生产集中和资本集中发展到一定程度必然产生垄断。出现「市场集中」「技术集中」的都是编的。","s":"2026年4月·第19题"},{"q":"垄断资本主义形成于19世纪末20世纪初，由于这一时期的垄断资本主义主要以私人垄断资本为基础，因此又被称为","o":["私人垄断资本主义","垄断竞争资本主义","国家垄断资本主义","金融垄断资本主义"],"a":0,"w":"两个阶段要分清：二战前是私人垄断，二战后国家干预加强才叫国家垄断资本主义。","s":"2025年10月·第19题"},{"q":"垄断是通过一定的垄断组织形式实现的。在一个或几个经济部门中占据垄断地位的大企业联合形成的垄断组织中，最简单、初级的形式是","o":["短期价格协定","长期价格协定","短期市场协定","长期市场协定"],"a":0,"w":"四种形式按结合从松到紧：卡特尔（价格协定）→辛迪加（统销统购）→托拉斯（全过程合并）→康采恩（跨部门集团）。最松最初级的就是短期价格协定。","s":"2026年4月·第20题"},{"q":"垄断利润的主要实现形式是垄断组织制定的","o":["市场规则","市场秩序","垄断规则","垄断价格"],"a":3,"w":"垄断利润靠垄断价格实现：卖的时候定高价，买的时候压低价。","s":"2023年10月·第18题"},{"q":"金融寡头对国家机器的控制主要是通过","o":["参与制来实现","同政府的“个人联合”来实现","同政府的金融联系来实现","对政府项目的资本参与来实现"],"a":1,"w":"记两条线：控制经济靠「参与制」，控制国家机器靠「个人联合」。这两个最容易对调。","s":"2023年10月·第19题"},{"q":"国家垄断资本主义对国民经济进行宏观调控的主要手段是","o":["经济手段和行政手段","法律手段和行政手段","经济手段和法律手段","法律手段和计划手段"],"a":2,"w":"主要手段是经济手段和法律手段，行政手段只在特定情况下偶尔使用。凡带「计划手段」的一律排除。","s":"2023年10月·第21题"},{"q":"恩格斯在《在马克思墓前的讲话》中指出，马克思一生有两大发现。正是这两大发现为实现社会主义从空想到科学的飞跃奠定了坚实的理论基础。这两大发现是","o":["辩证唯物主义和历史唯物主义","唯物史观和剩余价值学说","劳动价值论和剩余价值学说","唯物论和辩证法"],"a":1,"w":"两大发现固定就是唯物史观＋剩余价值学说。A、D 说的是马克思主义哲学的组成，不是「发现」。","s":"2026年4月·第23题"},{"q":"无产阶级夺取政权的第一次伟大尝试是","o":["第一国际成立","巴黎公社革命","第二国际成立","十月革命"],"a":1,"w":"巴黎公社是第一次「尝试」，十月革命才是第一次「成功」并建立国家。尝试和成功是两个词。","s":"2025年10月·第23题"},{"q":"世界上第一个社会主义国家是","o":["波兰人民共和国","苏维埃俄国","法国巴黎公社","中华人民共和国"],"a":1,"w":"1917年十月革命建立苏维埃俄国。巴黎公社是政权尝试，不是国家。","s":"2023年4月·第23题"},{"q":"社会主义国家的最高政治领导力量是","o":["工会","社会党","共产党","共青团"],"a":2,"w":"最高政治领导力量是共产党。注意「社会党」不是共产党，是个干扰项。","s":"2025年10月·第24题"},{"q":"实现了阶级的消灭和国家的消亡的社会是","o":["社会主义社会","共产主义社会","民主法治社会","信息网络社会"],"a":1,"w":"社会主义阶段国家还在、阶级差别还在；只有共产主义才实现阶级消灭和国家消亡。","s":"2023年10月·第25题"},{"q":"共产主义社会的根本特征是","o":["人与自然和谐共生","人们的精神境界极大提高","社会关系高度和谐","实现人的自由而全面的发展"],"a":3,"w":"四个都是共产主义的特征，但问「根本」特征只有一个：人的自由而全面的发展。限定词决定答案。","s":"2025年10月·第25题"}]}];
+var SPINE = {zhe:"#31586B", jing:"#B5892C", ke:"#B03A2E"};
+var L = ["A","B","C","D"];
+
+var KEY = "mayuan2.v1";
+function load(){
+  try { return JSON.parse(localStorage.getItem(KEY)) || {days:{}, wrong:[]}; }
+  catch(e){ return {days:{}, wrong:[]}; }
+}
+function save(s){ try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(e){} }
+function dayIdx(id){ for(var i=0;i<DAYS.length;i++) if(DAYS[i].id===id) return i; return -1; }
+function qByKey(k){
+  var p=k.split("-"), i=dayIdx(p[0]);
+  if(i<0) return null;
+  var q=DAYS[i].qs[parseInt(p[1],10)];
+  return q ? {q:q, day:DAYS[i], key:k} : null;
+}
+
+var app  = document.getElementById("app");
+var foot = document.getElementById("foot");
+
+/* ---------------- 首页 ---------------- */
+function renderHome(){
+  var s = load();
+  var doneDays = 0, tot = 0, right = 0;
+  for (var i=0;i<DAYS.length;i++){
+    var r = s.days[DAYS[i].id];
+    if (r && r.done){ doneDays++; tot += DAYS[i].qs.length; right += r.best; }
+  }
+  var rate = tot ? Math.round(right/tot*100) : 0;
+
+  var h = '<div class="cover">'+
+    '<h1>马原刷题包</h1>'+
+    '<p class="code">马克思主义基本原理 · 15044 · 第二阶段</p>'+
+    '<p class="lede">七天，七个板块，84 道真题。每天先看三张方法卡，再刷 12 题。目标是把 50 分的选择题打到 34 分以上。</p>'+
+    '<div class="stats">'+
+      '<div><div class="n">'+doneDays+'<small> / 7</small></div><div class="l">已完成天数</div></div>'+
+      '<div><div class="n">'+rate+'<small>%</small></div><div class="l">正确率</div></div>'+
+      '<div><div class="n">'+s.wrong.length+'</div><div class="l">错题本</div></div>'+
+    '</div><ul class="toc">';
+
+  for (var j=0;j<DAYS.length;j++){
+    var d = DAYS[j], rec = s.days[d.id];
+    var mk = rec && rec.done ? (rec.best + "/" + d.qs.length) : "";
+    h += '<li><a href="#'+d.id+'">'+
+         '<span class="sp" style="background:'+SPINE[d.cls]+'"></span>'+
+         '<span class="body"><span class="t">'+d.name+' · '+d.topic+'</span>'+
+         '<span class="d">'+d.sub+'</span></span>'+
+         '<span class="mark'+(mk?" ok":"")+'">'+mk+'</span></a></li>';
+  }
+  h += '<li><a href="#wrong">'+
+       '<span class="sp" style="background:#8A908B"></span>'+
+       '<span class="body"><span class="t">错题本</span>'+
+       '<span class="d">'+(s.wrong.length ? "累计 "+s.wrong.length+" 道，答对一次就移出" : "还没有错题")+'</span></span>'+
+       '<span class="mark"></span></a></li></ul>';
+  h += '<p class="tail">题目全部选自 2017—2026 年历年真题。<br>每天约 15 分钟，落一天就补一天。</p></div>';
+  app.innerHTML = h;
+
+  var nx = null;
+  for (var k=0;k<DAYS.length;k++){ if(!(s.days[DAYS[k].id]||{}).done){ nx = DAYS[k]; break; } }
+  if (nx) foot.innerHTML = '<a class="btn" href="#'+nx.id+'">'+(doneDays?"继续："+nx.name:"开始第一天")+'</a>';
+  else if (s.wrong.length) foot.innerHTML = '<a class="btn" href="#wrong">七天都刷完了，去清错题本</a>';
+  else foot.innerHTML = '<a class="btn" href="#d1">全部完成，从头再刷一遍</a>';
+  window.scrollTo(0,0);
+}
+
+/* ---------------- 每日：方法卡 ---------------- */
+function renderDay(i){
+  var d = DAYS[i];
+  var h = '<div class="bar"><div class="bar-row">'+
+      '<span class="step">'+(i+1)+' / 7</span><span class="name">'+d.topic+'</span>'+
+    '</div><div class="track"><i style="width:'+Math.round((i+1)/7*100)+'%"></i></div></div>'+
+    '<div class="wrap"><div class="sheet">'+
+      '<span class="tag '+d.cls+'">'+d.name+'</span>'+
+      '<h2 class="sec">'+d.topic+'</h2>'+
+      '<p class="lead">'+d.sub+'</p>'+
+      '<h3>先看方法，再动手</h3>';
+  for (var j=0;j<d.tips.length;j++){
+    h += '<div class="tip"><div class="tt">'+d.tips[j].t+'</div>'+
+         '<div class="tb">'+d.tips[j].b+'</div></div>';
+  }
+  h += '<div class="box plain"><div class="bt">今天的题</div>'+
+       '<p>12 道真题，做一题看一题的解析。错了不要紧，错题会自动进错题本，最后一天统一清。</p></div>'+
+       '</div></div>';
+  app.innerHTML = h;
+  foot.innerHTML = '<a class="btn ghost" href="#">首页</a>'+
+    '<a class="btn" href="#'+d.id+'/q">开始刷 12 题</a>';
+  window.scrollTo(0,0);
+}
+
+/* ---------------- 刷题 ---------------- */
+var run = null;
+
+function startDrill(i){
+  run = {mode:"day", di:i, list:[], idx:0, right:0, wrong:[]};
+  for (var j=0;j<DAYS[i].qs.length;j++) run.list.push(DAYS[i].id+"-"+j);
+  renderQ();
+}
+function startWrong(){
+  var s = load();
+  if (!s.wrong.length){ location.hash = ""; return; }
+  run = {mode:"wrong", di:-1, list:s.wrong.slice(), idx:0, right:0, wrong:[]};
+  renderQ();
+}
+
+function renderQ(){
+  if (!run){ location.hash = ""; return; }
+  if (run.idx >= run.list.length){ finish(); return; }
+  var item = qByKey(run.list[run.idx]);
+  if (!item){ run.idx++; renderQ(); return; }
+  var q = item.q;
+  var title = run.mode === "day" ? DAYS[run.di].topic : "错题重刷";
+  var h = '<div class="bar"><div class="bar-row">'+
+      '<span class="step">'+(run.idx+1)+' / '+run.list.length+'</span>'+
+      '<span class="name">'+title+'</span></div>'+
+      '<div class="track"><i style="width:'+Math.round(run.idx/run.list.length*100)+'%"></i></div></div>'+
+      '<div class="wrap">'+
+      (run.mode==="wrong" ? '<div class="qhead">'+item.day.topic+'</div>' : '')+
+      '<p class="qstem">'+q.q+'</p><ul class="choices" id="ch">';
+  for (var i=0;i<q.o.length;i++){
+    h += '<li data-i="'+i+'"><span class="L">'+L[i]+'</span><span>'+q.o[i]+'</span></li>';
+  }
+  h += '</ul><div id="vd"></div></div>';
+  app.innerHTML = h;
+  foot.innerHTML = '';
+
+  var lis = document.querySelectorAll("#ch li");
+  for (var k=0;k<lis.length;k++){
+    lis[k].onclick = function(){
+      var ul = document.getElementById("ch");
+      if (ul.getAttribute("data-lock")) return;
+      ul.setAttribute("data-lock","1");
+      var pick = parseInt(this.getAttribute("data-i"),10);
+      var ok = (pick === q.a);
+      if (ok) run.right++; else run.wrong.push(item.key);
+      recordAnswer(item.key, ok);
+      var all = document.querySelectorAll("#ch li");
+      for (var m=0;m<all.length;m++){
+        all[m].className = "lock";
+        if (m === q.a) all[m].className = "right lock";
+        else if (m === pick) all[m].className = "wrong lock";
+      }
+      document.getElementById("vd").innerHTML =
+        '<div class="verdict"><div class="v '+(ok?"ok":"no")+'">'+
+        (ok ? "答对了。" : "选错了，正确答案是 "+L[q.a]+"。")+'</div>'+
+        '<div>'+q.w+'</div><div class="src">'+q.s+'</div></div>';
+      foot.innerHTML = '<a class="btn" href="javascript:void(0)" id="nq">'+
+        (run.idx+1 < run.list.length ? "下一题" : "看今天的战报")+'</a>';
+      document.getElementById("nq").onclick = function(){ run.idx++; renderQ(); };
+      window.scrollTo(0, document.body.scrollHeight);
+    };
+  }
+  window.scrollTo(0,0);
+}
+
+/* 错题本：错了加入，答对移出 */
+function recordAnswer(key, ok){
+  var s = load(), p = s.wrong.indexOf(key);
+  if (ok){ if (p >= 0) s.wrong.splice(p,1); }
+  else   { if (p < 0)  s.wrong.push(key); }
+  save(s);
+}
+
+/* ---------------- 战报 ---------------- */
+function finish(){
+  var s = load();
+  var n = run.list.length, r = run.right;
+
+  if (run.mode === "day"){
+    var d = DAYS[run.di];
+    var rec = s.days[d.id] || {done:false, best:0};
+    rec.done = true;
+    if (r > rec.best) rec.best = r;
+    s.days[d.id] = rec;
+    save(s);
+  }
+
+  var word;
+  if (r === n)       word = "全对。这一块可以放下了，考前扫一眼方法卡就行。";
+  else if (r >= n-2) word = "这一块已经站稳了。错的那一两道看清解析，明天不会再错。";
+  else if (r >= n*0.6) word = "及格水平。错的题都进错题本了，最后一天会再碰到，不用现在硬记。";
+  else               word = "这一块是你的弱项，正常——它本来就难。今天不要重刷，明天换个板块，等错题本攒齐了一起清，效果比现在死磕好。";
+
+  var h = '<div class="wrap" style="padding-top:34px"><div class="qhead">'+
+    (run.mode==="day" ? DAYS[run.di].name+" 战报" : "错题重刷战报")+'</div>'+
+    '<div class="score">'+r+'<small> / '+n+'</small></div>'+
+    '<p class="dim" style="margin-bottom:20px">正确率 '+Math.round(r/n*100)+'%</p>'+
+    '<div class="box plain"><div class="bt">一句话</div><p>'+word+'</p></div>';
+
+  if (run.wrong.length){
+    h += '<h3>今天错的 '+run.wrong.length+' 道</h3>';
+    for (var i=0;i<run.wrong.length;i++){
+      var it = qByKey(run.wrong[i]);
+      if (!it) continue;
+      h += '<div class="wq"><div class="wqq">'+it.q.q+'</div>'+
+           '<div class="wqa">正确答案：'+L[it.q.a]+'. '+it.q.o[it.q.a]+'</div>'+
+           '<div class="wqw">'+it.q.w+'</div></div>';
+    }
+    h += '<p class="dim" style="margin-top:12px">这些题已经存进错题本，答对一次就会自动移出。</p>';
+  } else {
+    h += '<p class="dim">今天没有错题。</p>';
+  }
+  h += '<p class="tail">'+(run.mode==="day" ? "今天到此为止，别贪多。" : "错题本清一次少一道。")+'</p></div>';
+  app.innerHTML = h;
+
+  var nxt = "";
+  if (run.mode === "day" && run.di + 1 < DAYS.length){
+    nxt = '<a class="btn" href="#'+DAYS[run.di+1].id+'">去第 '+(run.di+2)+' 天</a>';
+  } else if (run.mode === "day"){
+    nxt = '<a class="btn" href="#wrong">七天刷完，去清错题本</a>';
+  } else {
+    nxt = '<a class="btn" href="#">回首页</a>';
+  }
+  foot.innerHTML = '<a class="btn ghost" href="#">首页</a>' + nxt;
+  run = null;
+  window.scrollTo(0,0);
+}
+
+/* ---------------- 错题本入口页 ---------------- */
+function renderWrongHome(){
+  var s = load();
+  var h = '<div class="wrap" style="padding-top:34px"><div class="qhead">错题本</div>'+
+    '<div class="score">'+s.wrong.length+'<small> 道</small></div>';
+  if (!s.wrong.length){
+    h += '<p class="dim" style="margin-top:14px">现在是空的。刷题时答错的题会自动存进来，答对一次就移出。</p>'+
+         '</div>';
+    app.innerHTML = h;
+    foot.innerHTML = '<a class="btn" href="#">回首页</a>';
+    window.scrollTo(0,0); return;
+  }
+  var cnt = {};
+  for (var i=0;i<s.wrong.length;i++){
+    var it = qByKey(s.wrong[i]);
+    if (it) cnt[it.day.topic] = (cnt[it.day.topic]||0) + 1;
+  }
+  h += '<p class="dim" style="margin-bottom:18px">按板块分布：</p>';
+  for (var k in cnt){
+    h += '<div class="wq" style="display:flex;justify-content:space-between">'+
+         '<span class="wqq">'+k+'</span><span class="wqa">'+cnt[k]+' 道</span></div>';
+  }
+  h += '<div class="box warn" style="margin-top:22px"><div class="bt">怎么用</div>'+
+       '<p>重刷一遍，答对的题会立刻移出错题本，答错的留下。刷到清空为止——清空的那天，你的选择题就稳了。</p></div></div>';
+  app.innerHTML = h;
+  foot.innerHTML = '<a class="btn ghost" href="#">首页</a>'+
+    '<a class="btn" href="#wrong/q">重刷 '+s.wrong.length+' 道</a>';
+  window.scrollTo(0,0);
+}
+
+/* ---------------- 路由 ---------------- */
+function route(){
+  var h = (location.hash || "").replace("#","");
+  if (!h){ run = null; renderHome(); return; }
+  if (h === "wrong"){ run = null; renderWrongHome(); return; }
+  if (h === "wrong/q"){ startWrong(); return; }
+  var p = h.split("/"), i = dayIdx(p[0]);
+  if (i >= 0){
+    if (p[1] === "q") startDrill(i); else { run = null; renderDay(i); }
+    return;
+  }
+  run = null; renderHome();
+}
+window.addEventListener("hashchange", route);
+route();
+
+</script>
+</body>
+</html>
